@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>습관 형성 & 충동 제어 트래커</title>
+    <title>1% Growth - 습관 형성 & 충동 제어 OS</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -11,7 +11,7 @@
     <!-- Google Fonts Inter & Noto Sans KR -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -26,13 +26,22 @@
                             500: '#22c55e',
                             600: '#16a34a',
                             700: '#15803d',
+                        }
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'pop': 'pop 0.3s ease-out forwards'
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
                         },
-                        impulse: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            700: '#be123c',
+                        pop: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
                         }
                     }
                 }
@@ -55,6 +64,29 @@
         .pb-safe {
             padding-bottom: env(safe-area-inset-bottom, 1rem);
         }
+        
+        /* Chat Bubble Styles */
+        .chat-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .chat-future {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+        .chat-me {
+            background-color: #10b981;
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
     </style>
 </head>
 <body class="h-full text-slate-800 antialiased flex flex-col justify-between max-w-md mx-auto bg-white shadow-xl min-h-screen relative">
@@ -65,12 +97,11 @@
                 <i class="fa-solid font-bold fa-seedling text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-base text-slate-900 leading-none">리핏 & 마인드</h1>
-                <p class="text-[11px] text-slate-500 font-medium">습관 형성 & 충동 관리</p>
+                <h1 class="font-bold text-base text-slate-900 leading-none">1% 리핏 & 마인드</h1>
+                <p class="text-[11px] text-slate-500 font-medium">습관 형성 & 충동 관리 OS</p>
             </div>
         </div>
         
-        <!-- Date Selector Button -->
         <div class="flex items-center space-x-1 bg-slate-100/80 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700">
             <button id="prev-date-btn" class="p-1 hover:text-emerald-600 active:scale-90 transition"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
             <span id="current-date-display" class="px-1 cursor-pointer">오늘</span>
@@ -78,43 +109,40 @@
         </div>
     </header>
 
-    <main id="main-container" class="flex-1 overflow-y-auto px-4 py-4 pb-28 hide-scrollbar">
+    <main id="main-container" class="flex-1 overflow-y-auto px-4 py-4 pb-28 hide-scrollbar bg-slate-50">
         
         <!-- TAB 1: 습관 체크리스트 (Habits View) -->
         <section id="view-habits" class="space-y-4">
             <!-- Daily Habit Progress Summary Card -->
             <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-lg relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
-                <div class="flex justify-between items-start mb-2">
+                <div class="flex justify-between items-start mb-2 relative z-10">
                     <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">오늘의 일일 목표</span>
-                        <h2 class="text-xl font-bold mt-0.5" id="habit-progress-title">좋은 습관 달성률</h2>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">정체성 투표 현황</span>
+                        <h2 class="text-xl font-bold mt-0.5">오늘의 1% 성장</h2>
                     </div>
                     <div class="text-right">
                         <span id="habit-count-badge" class="text-2xl font-extrabold text-emerald-400">0/5</span>
                     </div>
                 </div>
                 
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-700/60 rounded-full h-2.5 overflow-hidden mb-3">
+                <div class="w-full bg-slate-700/60 rounded-full h-2.5 overflow-hidden mb-3 relative z-10">
                     <div id="habit-progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
 
-                <div class="flex justify-between text-xs text-slate-300">
+                <div class="flex justify-between text-xs text-slate-300 relative z-10">
                     <span id="streak-badge"><i class="fa-solid fa-fire text-orange-400 mr-1"></i>연속 실천 <strong class="text-white" id="streak-count">1</strong>일째</span>
-                    <span id="cheer-message" class="text-emerald-300 font-medium">오늘도 작은 변화를 만들어보세요!</span>
+                    <span class="text-emerald-300 font-medium">B=MAP & 5초 스위치 대기중</span>
                 </div>
             </div>
 
             <!-- Urgent SOS Impulse Floating Trigger Banner -->
             <button id="sos-trigger-banner" class="w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-xl p-3 shadow-md flex items-center justify-between hover:opacity-95 active:scale-[0.99] transition">
                 <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-lg animate-pulse">
-                        🚨
-                    </div>
+                    <div class="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center text-lg animate-pulse">🚨</div>
                     <div class="text-left">
                         <div class="font-bold text-sm">지금 충동이 올라오나요?</div>
-                        <div class="text-xs text-rose-100">즉시 충동 원인을 점검하고 이겨내세요</div>
+                        <div class="text-xs text-rose-100">미래의 나와 대화하고 이겨내기</div>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-sm opacity-80"></i>
@@ -124,7 +152,7 @@
             <div class="flex items-center justify-between pt-2">
                 <h3 class="font-bold text-slate-900 text-base flex items-center gap-1.5">
                     <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
-                    내 습관 체크리스트
+                    내 습관 시스템
                 </h3>
                 <button onclick="openEditHabitModal()" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-plus text-[10px]"></i> 습관 추가
@@ -133,7 +161,7 @@
 
             <!-- Habit Items List -->
             <div id="habit-list-container" class="space-y-3">
-                <!-- Dynamic Habit Items will be injected here -->
+                <!-- Dynamic Habit Items -->
             </div>
         </section>
 
@@ -144,29 +172,27 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">마인드 컨트롤</span>
-                        <h2 class="text-xl font-bold mt-0.5">충동 점검 & 대처법</h2>
+                        <h2 class="text-xl font-bold mt-0.5">미래 자아 소환기</h2>
                     </div>
                     <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-xl flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-brain"></i>
+                        <i class="fa-solid fa-user-astronaut"></i>
                     </div>
                 </div>
-                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-                    충동이 올 때 핵심 대처 수칙을 확인하고 다스려보세요.
+                <p class="text-[11px] text-slate-300 mt-2 leading-relaxed opacity-90">
+                    할 허시필드 연구 기반: 충동에 흔들릴 때, 10년 뒤의 나와 대화하여 뇌의 단기 보상 회로를 차단하세요.
                 </p>
             </div>
 
-            <!-- Start Impulse Self Check CTA Button -->
             <button id="open-impulse-wizard-btn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md flex items-center justify-center space-x-2 transition active:scale-98">
                 <i class="fa-solid fa-bolt text-amber-300"></i>
                 <span>지금 충동 점검 시작하기 (SOS)</span>
             </button>
 
-            <!-- Pre-defined Impulse Categories & Guide Cards -->
             <div class="pt-2">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="font-bold text-slate-900 text-base flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved text-rose-500 text-sm"></i>
-                        등록된 충동 및 핵심 대처 가이드
+                        등록된 충동 트리거
                     </h3>
                     <button onclick="openEditImpulseModal()" class="text-xs bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1">
                         <i class="fa-solid fa-plus text-[10px]"></i> 충동 추가
@@ -174,135 +200,266 @@
                 </div>
                 
                 <div id="impulse-guide-container" class="space-y-3">
-                    <!-- Dynamic Impulse Cards will be injected here -->
+                    <!-- Dynamic Impulse Cards -->
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: 통계 및 기록 (Stats View) -->
+        <!-- TAB 3: 마인드 짐 (Mindset View) -->
+        <section id="view-mindset" class="space-y-4 hidden">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-4 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">마인드셋 짐(Gym)</span>
+                        <h2 class="text-xl font-bold mt-0.5">시각화 & 언어 교정</h2>
+                    </div>
+                    <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-300 mt-2 leading-relaxed opacity-90">
+                    하기 싫은 순간을 극복하는 시각화 리허설과 부정적인 단어를 성장 언어로 바꾸는 훈련을 수시로 진행하세요.
+                </p>
+            </div>
+
+            <!-- 1. Visualization Rehearsal Section -->
+            <div class="pt-2">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-1.5 mb-3">
+                    <i class="fa-solid fa-eye text-emerald-500 text-sm"></i>
+                    하기 싫은 순간 리허설 (시각화)
+                </h3>
+                <div id="mindset-visual-container" class="space-y-3">
+                    <!-- Dynamic Visualisation Cards -->
+                </div>
+            </div>
+
+            <!-- 2. Language Reframing Section -->
+            <div class="pt-4">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-1.5 mb-3">
+                    <i class="fa-solid fa-comment-dots text-indigo-500 text-sm"></i>
+                    언어 교정 거울
+                </h3>
+                <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-4">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                        <label class="font-bold text-slate-800 text-xs block mb-1">고정 마인드셋 카테고리</label>
+                        <select id="mindset-category" onchange="updateMindsetPlaceholder()" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500 mb-2">
+                            <option value="blame">남 탓</option>
+                            <option value="past">과거 단념</option>
+                            <option value="pressure">압박 단정</option>
+                        </select>
+                        
+                        <label class="font-bold text-rose-800 text-xs block mb-1 mt-3">내가 무심코 내뱉은 말</label>
+                        <textarea id="mindset-bad-word" rows="2" class="w-full border border-rose-200 bg-rose-50 rounded-lg p-2 text-xs text-rose-700 focus:outline-none" placeholder="예: 저 사람 때문에 내 계획이 다 망가졌어."></textarea>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50 p-3.5 rounded-xl border border-indigo-100">
+                        <label class="font-bold text-indigo-900 text-xs block mb-2 flex items-center justify-between">
+                            <span>성장 마인드셋 (교정된 언어)</span>
+                            <button onclick="copyReframedWord()" class="text-indigo-500 hover:text-indigo-700 transition" title="복사하기">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </label>
+                        <textarea id="mindset-good-word" rows="3" class="w-full border border-indigo-200 bg-white rounded-lg p-2 text-xs text-indigo-700 font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="성장 언어 예시: 이 상황에서 내가 통제할 수 있는 것은 무엇일까?"></textarea>
+                    </div>
+
+                    <button onclick="saveMindsetReframing()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow text-sm active:scale-95">
+                        교정 완료 및 마음에 새기기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: 통계 및 기록 (Stats View) -->
         <section id="view-stats" class="space-y-4 hidden">
             <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
                 <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
                     <i class="fa-solid fa-chart-pie text-emerald-500"></i>
-                    이번 주 습관 달성현황
+                    이번 주 정체성 투표
                 </h3>
-                <div id="weekly-calendar" class="grid grid-cols-7 gap-1.5 text-center pt-1">
-                    <!-- Weekly mini calendar injected via JS -->
-                </div>
+                <div id="weekly-calendar" class="grid grid-cols-7 gap-1.5 text-center pt-1"></div>
             </div>
 
-            <!-- Impulse Overcome Stat Card -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3.5 text-center">
-                    <span class="text-xs font-semibold text-emerald-600">성공한 충동 제어</span>
-                    <div id="stat-impulse-win" class="text-2xl font-extrabold text-emerald-700 mt-1">0회</div>
+                    <span class="text-[10px] font-bold text-emerald-600">이겨낸 충동 횟수</span>
+                    <div id="stat-impulse-win" class="text-2xl font-black text-emerald-700 mt-1">0</div>
                 </div>
                 <div class="bg-amber-50 border border-amber-100 rounded-2xl p-3.5 text-center">
-                    <span class="text-xs font-semibold text-amber-600">누적 실천 습관</span>
-                    <div id="stat-habits-total" class="text-2xl font-extrabold text-amber-700 mt-1">0회</div>
+                    <span class="text-[10px] font-bold text-amber-600">누적된 성장 한 표</span>
+                    <div id="stat-habits-total" class="text-2xl font-black text-amber-700 mt-1">0</div>
                 </div>
             </div>
 
-            <!-- Recent Impulse Logs -->
             <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
                 <h3 class="font-bold text-slate-900 text-sm flex items-center justify-between">
                     <span><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1.5"></i>충동 대처 기록</span>
-                    <span id="log-count-text" class="text-xs font-normal text-slate-400">최근 10건</span>
                 </h3>
-                <div id="impulse-history-list" class="space-y-2 divide-y divide-slate-100 text-sm">
-                    <!-- Logs injected via JS -->
-                    <p class="text-xs text-slate-400 text-center py-4">아직 기록된 충동 대처 내역이 없습니다.</p>
-                </div>
+                <div id="impulse-history-list" class="space-y-2 divide-y divide-slate-100 text-sm"></div>
             </div>
-
-            <!-- Reset Data Option -->
-            <div class="pt-2 text-center">
+            
+            <div class="pt-4 text-center pb-4">
                 <button onclick="confirmResetData()" class="text-xs text-slate-400 hover:text-slate-600 underline font-medium">
-                    <i class="fa-solid fa-rotate-left mr-1"></i>초기 설정 데이터로 복원하기
+                    <i class="fa-solid fa-rotate-left mr-1"></i>기본 제공 데이터로 앱 초기화하기
                 </button>
             </div>
         </section>
-
     </main>
 
-    <div id="modal-habit-detail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-200 translate-y-4">
+    <!-- Modal: Habit Detail & 5-Second Rule Integration -->
+    <div id="modal-habit-detail" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-md flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-50 w-full max-w-md rounded-t-3xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-300 translate-y-4 max-h-[90vh]">
             
-            <!-- Modal Header -->
-            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
-                <div class="flex items-center space-x-2.5">
-                    <span id="modal-habit-icon" class="text-2xl">📚</span>
-                    <div>
-                        <h3 id="modal-habit-title" class="font-bold text-lg leading-tight">독서</h3>
-                        <p class="text-[11px] text-emerald-400 font-medium">실천 미션 확인</p>
+            <div id="habit-info-state" class="flex flex-col h-full">
+                <div class="p-4 bg-white flex justify-between items-center border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <span id="modal-habit-icon" class="text-2xl bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center">📚</span>
+                        <div>
+                            <h3 id="modal-habit-title" class="font-extrabold text-lg text-slate-900">독서</h3>
+                            <p class="text-[11px] text-slate-400 font-medium">B=MAP 극소 단위 행동</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="modal-habit-edit-btn" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <button id="close-habit-modal-btn" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button id="modal-habit-edit-btn" class="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 px-2.5 py-1.5 rounded-lg border border-slate-700 transition">
-                        <i class="fa-solid fa-pen mr-1"></i>수정
+
+                <div class="p-5 space-y-4 overflow-y-auto pb-6">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
+                        <div class="flex-1">
+                            <span class="text-[10px] font-bold text-emerald-600 block mb-1">📍 앵커(신호)</span>
+                            <p id="modal-habit-anchor" class="font-bold text-slate-800 text-base">잠옷 환복 이후</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-lg"></i>
+                        <div class="flex-1">
+                            <span class="text-[10px] font-bold text-teal-600 block mb-1">⚡ 행동(1분)</span>
+                            <p id="modal-habit-behavior" class="font-bold text-slate-800 text-base">1분간 독서</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 text-center py-4 px-2">준비되셨나요? 하단 버튼을 누르면 망설임을 차단하는 5초 카운트다운이 시작됩니다.</p>
+                </div>
+
+                <div class="p-4 bg-white border-t border-slate-100 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+                    <button id="btn-trigger-countdown" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition shadow-lg shadow-emerald-500/30 text-base flex items-center justify-center space-x-2 active:scale-[0.98]">
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span>5초 법칙으로 시작하기</span>
                     </button>
-                    <button id="close-habit-modal-btn" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center hover:bg-slate-700">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button id="btn-cancel-complete" class="hidden w-full bg-slate-100 text-slate-600 font-bold py-3.5 rounded-xl transition mt-2 active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> 실천 완료 취소하기
                     </button>
                 </div>
             </div>
 
-            <!-- Modal Content: Prominent Anchor & Behavior ONLY -->
-            <div class="p-5 space-y-4 text-slate-800">
-                
-                <!-- Anchor Card -->
-                <div class="bg-gradient-to-br from-emerald-50 to-teal-50/50 p-4 rounded-2xl border-2 border-emerald-200/70 shadow-sm">
-                    <div class="flex items-center space-x-1.5 text-xs font-bold text-emerald-700 mb-1.5 uppercase tracking-wider">
-                        <span>📍</span>
-                        <span>트리거 / 앵커 (언제?)</span>
-                    </div>
-                    <p id="modal-habit-anchor" class="font-extrabold text-slate-900 text-base leading-snug">잠옷 환복 이후</p>
+            <!-- Countdown State -->
+            <div id="countdown-state" class="hidden flex-col items-center justify-center h-80 bg-slate-900 text-white p-6 relative">
+                <p class="text-sm text-slate-400 font-medium mb-6">생각을 끄고 몸을 움직이세요!</p>
+                <div class="relative w-40 h-40 flex items-center justify-center">
+                    <div class="absolute inset-0 border-8 border-emerald-500 rounded-full animate-pulse-fast opacity-50"></div>
+                    <div class="absolute inset-0 border-4 border-emerald-400 rounded-full"></div>
+                    <span id="countdown-number" class="text-7xl font-black text-white z-10">5</span>
                 </div>
-
-                <!-- Behavior Card -->
-                <div class="bg-gradient-to-br from-teal-50 to-emerald-50/50 p-4 rounded-2xl border-2 border-teal-200/70 shadow-sm">
-                    <div class="flex items-center space-x-1.5 text-xs font-bold text-teal-700 mb-1.5 uppercase tracking-wider">
-                        <span>⚡</span>
-                        <span>최소 실천 행동 (무엇을?)</span>
-                    </div>
-                    <p id="modal-habit-behavior" class="font-extrabold text-teal-900 text-lg leading-snug">1분간 독서</p>
-                </div>
-
-            </div>
-
-            <!-- Modal Action Footer -->
-            <div class="p-4 bg-slate-50 border-t border-slate-100">
-                <button id="modal-habit-toggle-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-base flex items-center justify-center space-x-2 active:scale-98">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>오늘 실천 완료하기</span>
-                </button>
+                <p class="text-xs text-emerald-400 font-bold mt-8">0이 되는 순간 바로 시작합니다</p>
             </div>
         </div>
     </div>
 
-    <div id="modal-celebration" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-transform duration-200 scale-95">
-            <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl animate-bounce">
+    <!-- Modal: Celebration -->
+    <div id="modal-celebration" class="fixed inset-0 z-[60] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center space-y-5 transform transition-transform duration-300 scale-90">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto text-4xl animate-bounce shadow-inner">
                 🎉
             </div>
             <div>
-                <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">MISSION COMPLETED!</span>
-                <h3 class="text-xl font-extrabold text-slate-900 mt-0.5">오늘의 습관 실천 성공!</h3>
+                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded">Identity Vote +1</span>
+                <h3 class="text-2xl font-black text-slate-900 mt-2">오늘도 해냈습니다!</h3>
+                <p class="text-xs text-slate-500 mt-1">뇌에 도파민 보상을 각인시키세요.</p>
             </div>
             
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left">
-                <span class="text-[11px] font-bold text-amber-700 block mb-1">👏 나 자신을 위한 축하 보상:</span>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-left relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-400"></div>
+                <span class="text-[11px] font-bold text-amber-600 block mb-1 flex items-center gap-1"><i class="fa-solid fa-gift"></i> 나의 0.5초 축하 보상</span>
                 <p id="celebration-message-text" class="text-sm font-bold text-slate-800 leading-snug">읽은 내용 상기한 후 자기 칭찬하기</p>
             </div>
 
-            <button onclick="closeCelebrationModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow">
-                좋아요, 계속하기!
+            <button onclick="closeCelebrationModal()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition shadow active:scale-95">
+                완벽해, 내일도 하자!
             </button>
         </div>
     </div>
 
-    <div id="modal-edit-habit" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+    <!-- Blackout Screen (Fake Lock) -->
+    <div id="blackout-screen" class="fixed inset-0 z-[70] bg-black hidden flex-col items-center justify-center cursor-pointer transition-opacity duration-500 opacity-0">
+        <i class="fa-solid fa-mobile-screen text-slate-800 text-6xl mb-6"></i>
+        <h2 class="text-xl font-black mb-2 text-slate-700">행동 모드 켜짐</h2>
+        <p class="text-sm text-slate-700 font-medium">스마트폰을 덮고 지금 당장 실행하세요.</p>
+        <p class="text-[10px] text-slate-800 mt-16 animate-pulse">실행 후 화면을 터치하면 도파민 보상이 지급됩니다</p>
+    </div>
+
+    <!-- Modal: Rehearsal (Visualization 10s) -->
+    <div id="modal-rehearsal" class="fixed inset-0 z-[75] bg-slate-900/95 backdrop-blur-md hidden flex-col items-center justify-center transition-opacity duration-300 opacity-0 p-6">
+        <div class="w-full max-w-sm text-center">
+            <h2 class="text-emerald-400 font-bold text-sm tracking-widest mb-8 uppercase">Mental Rehearsal</h2>
+            
+            <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 mb-8 relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-4 -top-4 text-7xl opacity-5">🎬</div>
+                <h3 id="rehearsal-habit-name" class="text-white font-black text-xl mb-4 relative z-10">습관명</h3>
+                <p id="rehearsal-visual-text" class="text-slate-300 text-sm leading-relaxed font-medium relative z-10 whitespace-pre-wrap">
+                    시각화 내용이 여기에 표시됩니다.
+                </p>
+            </div>
+
+            <div class="relative w-32 h-32 mx-auto flex items-center justify-center mb-8">
+                <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+                <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle id="rehearsal-progress" cx="50" cy="50" r="48" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="301.59" stroke-dashoffset="0" class="transition-all duration-1000 ease-linear"></circle>
+                </svg>
+                <span id="rehearsal-countdown" class="text-4xl font-black text-white z-10">10</span>
+            </div>
+
+            <p class="text-slate-400 text-xs mb-8">눈을 감고 위의 상황을 생생하게 상상하세요.</p>
+            
+            <button onclick="cancelRehearsal()" class="text-slate-500 hover:text-white text-sm font-medium transition underline">
+                중단하기
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Visualisation (마인드 짐 시각화 수정용) -->
+    <div id="modal-edit-visual" class="fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-200 translate-y-4">
+            <div class="p-4 bg-emerald-700 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base">시각화 리허설 내용 수정</h3>
+                <button onclick="closeEditVisualModal()" class="w-7 h-7 rounded-full bg-emerald-800 text-emerald-100 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="p-4 flex-1">
+                <input type="hidden" id="edit-visual-habit-id">
+                <p class="text-[11px] text-slate-500 mb-2">하기 싫은 순간을 극복하는 구체적인 행동을 줄바꿈으로 나누어 적어보세요.</p>
+                <textarea id="edit-visual-text" rows="5" class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-emerald-500 leading-relaxed text-sm shadow-inner"></textarea>
+                
+                <div class="pt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeEditVisualModal()" class="bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl">취소</button>
+                    <button type="button" onclick="saveVisualModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Habit Form -->
+    <div id="modal-edit-habit" class="fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-200 translate-y-4">
             <div class="p-4 bg-emerald-700 text-white flex justify-between items-center">
                 <h3 id="edit-habit-modal-title" class="font-bold text-base">습관 수정 / 추가</h3>
                 <button onclick="closeEditHabitModal()" class="w-7 h-7 rounded-full bg-emerald-800 text-emerald-100 flex items-center justify-center">
@@ -367,8 +524,67 @@
         </div>
     </div>
 
-    <div id="modal-edit-impulse" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+    <!-- Modal: Impulse Wizard (Future Self Chat) -->
+    <div id="modal-impulse-wizard" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-50 w-full max-w-md rounded-t-3xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-300 translate-y-4 max-h-[95vh] h-[95vh] sm:h-[80vh]">
+            
+            <div class="p-4 bg-white border-b border-slate-100 flex justify-between items-center shadow-sm z-10">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-sm font-bold">🚨</div>
+                    <div>
+                        <h3 class="font-bold text-base text-slate-900 leading-none">충동 제어 프로토콜</h3>
+                        <p id="wizard-subtitle" class="text-[10px] text-slate-500 font-medium">어떤 충동인가요?</p>
+                    </div>
+                </div>
+                <button id="close-wizard-modal-btn" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- STEP 1: Select Impulse -->
+            <div id="wizard-step-1" class="p-4 overflow-y-auto flex-1 bg-white">
+                <label class="font-bold text-slate-900 text-sm block mb-3">지금 당신을 괴롭히는 충동은 무엇인가요?</label>
+                <div id="wizard-impulse-options" class="grid grid-cols-2 gap-3">
+                    <!-- Dynamic buttons -->
+                </div>
+            </div>
+
+            <!-- STEP 2: Future Self Chat -->
+            <div id="wizard-step-2" class="hidden flex-col flex-1 overflow-hidden relative">
+                <!-- Chat Area -->
+                <div id="chat-container" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 bg-slate-50 pb-4">
+                    <div class="text-center my-2">
+                        <span class="bg-slate-200/50 text-slate-500 text-[10px] font-bold px-3 py-1 rounded-full">미래의 나와 연결되었습니다.</span>
+                    </div>
+                </div>
+
+                <div id="chat-action-area" class="p-3 bg-white border-t border-slate-100 shadow-[0_-10px_20px_rgba(0,0,0,0.02)] shrink-0 hidden">
+                    <!-- 중간 질문 단계 버튼 -->
+                    <div id="action-mid-chat" class="flex gap-2">
+                        <button id="wizard-reply-btn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-1.5 overflow-hidden">
+                            <i class="fa-solid fa-reply shrink-0 text-slate-400"></i> <span id="reply-text-preview" class="truncate text-[11px]">내 답변</span>
+                        </button>
+                        <button class="wizard-win-btn w-[40%] shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/20 text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                            <i class="fa-solid fa-trophy text-amber-300"></i> 이겨냄!
+                        </button>
+                    </div>
+                    <!-- 마지막 질문 단계 버튼 -->
+                    <div id="action-end-chat" class="flex gap-2 hidden">
+                        <button id="wizard-givein-btn" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-3.5 rounded-xl transition text-sm">
+                            솔직히 굴복함
+                        </button>
+                        <button class="wizard-win-btn flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/20 text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                            <i class="fa-solid fa-trophy text-amber-300"></i> 이겨냈음!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Impulse Form -->
+    <div id="modal-edit-impulse" class="fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-200 translate-y-4">
             <div class="p-4 bg-rose-700 text-white flex justify-between items-center">
                 <h3 id="edit-impulse-modal-title" class="font-bold text-base">충동 수정 / 추가</h3>
                 <button onclick="closeEditImpulseModal()" class="w-7 h-7 rounded-full bg-rose-800 text-rose-100 flex items-center justify-center">
@@ -389,16 +605,17 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="font-bold text-slate-800 block mb-1">🛡️ 행동 대처 수칙 (한 줄에 하나씩 입력)</label>
-                    <p class="text-[10px] text-slate-400 mb-1">형식예시: [라벨] 행동 내용</p>
-                    <textarea id="edit-impulse-steps" rows="4" required class="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-rose-500 leading-relaxed" placeholder="[휴식 통제] 침대에 눕는 건 수면 시간에만!&#10;[이동 시간] 읽을 책 필수 소지"></textarea>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div>
+                        <label class="font-bold text-slate-800 block mb-1">🤖 미래 자아 질문 (줄바꿈)</label>
+                        <textarea id="edit-impulse-questions" rows="6" required class="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-rose-500 leading-relaxed text-[11px]" placeholder="예: 해야 할 일을 미루는가?&#10;이게 미래에 도움이 될까?"></textarea>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-800 block mb-1">👤 나의 예상 답변 (줄바꿈)</label>
+                        <textarea id="edit-impulse-answers" rows="6" required class="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-rose-500 leading-relaxed text-[11px]" placeholder="예: 잠시 회피하고 싶었어.&#10;전혀 안 될 것 같아."></textarea>
+                    </div>
                 </div>
-
-                <div>
-                    <label class="font-bold text-slate-800 block mb-1">❓ 충동 점검 질문 (줄바꿈으로 구분)</label>
-                    <textarea id="edit-impulse-questions" rows="4" required class="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-rose-500 leading-relaxed" placeholder="내가 해야 할 일을 미루고 있는가?&#10;미래의 나에게 도움이 되는 일인가?"></textarea>
-                </div>
+                <p class="text-[10px] text-slate-400 mt-1">※ 양쪽 줄 수를 맞춰 작성하시면 대화가 순서대로 진행됩니다.</p>
 
                 <div class="pt-2 flex items-center justify-between gap-2">
                     <button type="button" id="btn-delete-impulse" onclick="deleteCurrentImpulse()" class="bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold px-3 py-2.5 rounded-xl transition text-xs flex items-center gap-1">
@@ -413,86 +630,30 @@
         </div>
     </div>
 
-    <div id="modal-impulse-wizard" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl transform transition-transform duration-200 translate-y-4">
-            
-            <!-- Wizard Header -->
-            <div class="p-4 bg-rose-600 text-white flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <span class="text-lg">🚨</span>
-                    <h3 class="font-bold text-base">충동 긴급 점검</h3>
-                </div>
-                <button id="close-wizard-modal-btn" class="w-7 h-7 rounded-full bg-rose-700 text-rose-100 flex items-center justify-center">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            </div>
-
-            <!-- Wizard Content Steps -->
-            <div class="p-4 overflow-y-auto space-y-4 flex-1 text-sm">
-                
-                <!-- STEP 1: Select Impulse -->
-                <div id="wizard-step-1" class="space-y-3">
-                    <label class="font-bold text-slate-900 text-sm block">1. 지금 어떤 충동이 올라왔나요?</label>
-                    <div id="wizard-impulse-options" class="grid grid-cols-2 gap-2.5">
-                        <!-- Dynamic impulse buttons -->
-                    </div>
-                </div>
-
-                <!-- STEP 2: Coping Strategy Review (Hidden initially) -->
-                <div id="wizard-step-2" class="space-y-3 hidden">
-                    <!-- Action Coping Steps List Container -->
-                    <div class="space-y-1.5">
-                        <span class="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                            <i class="fa-solid fa-shield text-emerald-500"></i> 바로 실행할 핵심 대처 수칙
-                        </span>
-                        <div id="wizard-coping-container" class="space-y-2">
-                            <!-- Formatted coping steps injected via JS -->
-                        </div>
-                    </div>
-
-                    <!-- Interactive Questions Checklist -->
-                    <div class="space-y-2 pt-2">
-                        <label class="font-bold text-slate-900 text-xs block">2. 충동 제어 점검 질문 (체크해보세요)</label>
-                        <div id="wizard-questions-list" class="space-y-2">
-                            <!-- Question Checkboxes -->
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Wizard Action Buttons Footer -->
-            <div class="p-3 bg-slate-50 border-t border-slate-100 space-y-2">
-                <button id="wizard-win-btn" disabled class="w-full bg-emerald-600 opacity-50 cursor-not-allowed hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-trophy text-amber-300"></i>
-                    <span>충동을 이겨냈습니다! (기록 저장)</span>
-                </button>
-                <button id="wizard-givein-btn" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-xl transition text-xs">
-                    이번엔 굴복했습니다 (솔직하게 기록)
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 z-40 pb-safe">
-        <div class="grid grid-cols-3 gap-1">
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-2 py-2 z-40 pb-safe">
+        <div class="grid grid-cols-4 gap-1">
             <button id="tab-btn-habits" class="nav-tab-btn flex flex-col items-center justify-center py-1 text-emerald-600 transition font-bold">
                 <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
-                <span class="text-[11px] font-bold">습관 체크</span>
+                <span class="text-[10px] font-bold">습관 체크</span>
             </button>
             <button id="tab-btn-impulse" class="nav-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition">
                 <i class="fa-solid fa-brain text-lg mb-0.5"></i>
-                <span class="text-[11px] font-medium">충동 점검</span>
+                <span class="text-[10px] font-medium">충동 점검</span>
+            </button>
+            <button id="tab-btn-mindset" class="nav-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-dumbbell text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium">마인드 짐</span>
             </button>
             <button id="tab-btn-stats" class="nav-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition">
                 <i class="fa-solid fa-chart-column text-lg mb-0.5"></i>
-                <span class="text-[11px] font-medium">통계 리포트</span>
+                <span class="text-[10px] font-medium">통계 리포트</span>
             </button>
         </div>
     </nav>
 
+    <!-- JS Logic -->
     <script>
-        // Default Habit Data
         const DEFAULT_HABITS = [
             {
                 id: 'reading',
@@ -508,8 +669,7 @@
                 ],
                 futureDialogue: [
                     '6개월 뒤 내가 경제학 지식을 자유자재로 쓸 수 있을까?',
-                    '1년 뒤 내가 똑똑해져 있을까?',
-                    '10년 뒤 내가 경제/역사 전공자와 자유롭게 대화할까?'
+                    '1년 뒤 내가 똑똑해져 있을까?'
                 ],
                 languageReframing: '경제와 역사 도서를 읽고 싶다. 똑똑한 내가 되려면 지금 무엇을 해야할까?'
             },
@@ -529,82 +689,20 @@
                     '1년 뒤 내가 탄탄한 몸을 만들었을까?'
                 ],
                 languageReframing: '아침 운동을 하고 싶다. 내가 복근을 만드려면 지금 무엇을 해야할까?'
-            },
-            {
-                id: 'z2_cardio',
-                name: 'Z2 유산소',
-                icon: '🚴',
-                anchor: '오후 9시 30분',
-                behavior: '헬스장 방문',
-                celebration: '직원분께 웃으며 인사하기',
-                visualisation: [
-                    '오후 9시 30분에 도서관에서 짐 정리하는 나 상상',
-                    '헬스장 정리 후 옷 갈아입는 나 상상',
-                    '런닝머신 하나 잡고 조작하는 나 상상'
-                ],
-                futureDialogue: [
-                    '6개월 뒤 내가 복근을 만들었을까?',
-                    '1년 뒤 내가 탄탄한 몸을 만들었을까?'
-                ],
-                languageReframing: '저녁 운동을 하고 싶다. 내가 복근을 만드려면 지금 무엇을 해야할까?'
-            },
-            {
-                id: 'language_study',
-                name: '언어 공부',
-                icon: '🗣️',
-                anchor: '아침 도서관 갈 때',
-                behavior: '제미나이 1문장 영어 대화',
-                celebration: '끝낸 후 칭찬 듣도록 프롬프트 설정',
-                visualisation: [
-                    '아침에 이어폰 꽂는 나 상상',
-                    '제미나이 영어 공부 프롬프트 들어가는 나 상상',
-                    '안부인사 하는 나 상상'
-                ],
-                futureDialogue: [
-                    '6개월 뒤 내가 영어를 유창하게 구사할까?',
-                    '6개월 뒤 내가 독일어 시험을 통과할까?',
-                    '10년 뒤 내가 모국어처럼 영어와 독일어로 말할까?'
-                ],
-                languageReframing: '영어/독일어를 잘 하려면 지금 내가 무엇을 해야할까?'
-            },
-            {
-                id: 'ncs_study',
-                name: 'NCS 공부',
-                icon: '✍️',
-                anchor: '아침 공부 직전',
-                behavior: 'NCS 한 문제 풀이',
-                celebration: '채점 후 스마일 따봉',
-                visualisation: [
-                    'ncs 문제집 가방에 넣는 나 상상',
-                    '도착 후 ncs 문제집 꺼내는 나 상상',
-                    'ncs 문제 푸는 나 상상'
-                ],
-                futureDialogue: [
-                    '6개월 뒤 내가 글을 지금보다 더 빠르게 읽을까?',
-                    '6개월 뒤 내가 지금보다 더 빠르게 암산할까?'
-                ],
-                languageReframing: '잘 굴러가는 두뇌를 갖기 위해서 지금 무엇을 해야할까?'
             }
         ];
 
-        // Default Impulse Data
+        // Default Impulse Data (질문-답변 쌍으로 업데이트)
         const DEFAULT_IMPULSES = [
             {
                 id: 'sns',
                 name: 'Social Media (SNS)',
                 icon: '📱',
                 color: 'rose',
-                copingSteps: [
-                    { num: 1, label: '휴식 통제', text: '침대에 눕는 건 <strong class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold border border-amber-300">오직 수면 시간</strong>에만! (휴식은 의자나 소파에서)' },
-                    { num: 2, label: '이동 시간', text: '이동할 때는 가방이나 손에 읽을 <strong class="bg-emerald-100 text-emerald-900 px-1.5 py-0.5 rounded font-bold border border-emerald-300">책</strong> 필수 소지' },
-                    { num: 3, label: '아이디어', text: '인터넷 검색 대신 <strong class="bg-indigo-100 text-indigo-900 px-1.5 py-0.5 rounded font-bold border border-indigo-300">메모장</strong>이나 포스트잇에만 즉시 기록' }
-                ],
-                questions: [
-                    '내가 해야 할 일을 미루고, SNS를 켰는가?',
-                    '지금 SNS 외에 나를 발전시킬 수 있는 행위가 더 없는가?',
-                    'SNS 말고 남는 시간을 활용할 수 있는 방법은 없는가?',
-                    '다른 목적으로 인터넷에 접속했으나 습관적으로 SNS에 접속했는가?',
-                    '지금 SNS 하는 행위와 이유를 남들에게 당당하게 말할 수 있는가?'
+                dialogues: [
+                    { future: '내가 해야 할 일을 미루고, SNS를 켰는가?', me: '응, 잠시 회피하고 싶었어.' },
+                    { future: '지금 SNS 외에 나를 발전시킬 수 있는 행위가 더 없는가?', me: '아니, 책을 읽거나 운동을 할 수 있지.' },
+                    { future: 'SNS를 하는 게 미래의 나에게 도움이 될까?', me: '전혀 도움 되지 않을 거야.' }
                 ]
             },
             {
@@ -612,28 +710,10 @@
                 name: 'TFT (게임)',
                 icon: '🎮',
                 color: 'purple',
-                copingSteps: [
-                    { num: 1, label: '환경 차단', text: '평소 스마트폰에서 <strong class="bg-rose-100 text-rose-900 px-1.5 py-0.5 rounded font-bold border border-rose-300">TFT 앱 미리 삭제</strong>해두기' }
-                ],
-                questions: [
-                    '내가 해야 할 일을 미루고, TFT를 설치하려 하는가?',
-                    'TFT를 하는 게 미래의 나에게 도움이 되는 일인가?',
-                    'TFT 말고 남는 시간을 활용할 수 있는 방법은 없는가?',
-                    'TFT 말고 고생한 나를 위해 보상할 다른 방법은 없는가?'
-                ]
-            },
-            {
-                id: 'pcbang',
-                name: 'Gaming Cafe (PC방)',
-                icon: '🖥️',
-                color: 'indigo',
-                copingSteps: [
-                    { num: 1, label: '결제 차단', text: '장거리 이동을 제외하고 <strong class="bg-blue-100 text-blue-900 px-1.5 py-0.5 rounded font-bold border border-blue-300">주거래 카드</strong>는 집에 두고 외출하기' }
-                ],
-                questions: [
-                    '내가 해야 할 일을 미루고 PC방을 가려고 하는가?',
-                    '지금 PC방 가는 게 미래의 나에게 도움이 되는 일인가?',
-                    'PC방 가는 거 말고 남는 시간을 활용할 수 있는 방법은 없는가?'
+                dialogues: [
+                    { future: '내가 해야 할 일을 미루고, 게임을 켰는가?', me: '응, 잠깐 쉬고 싶다는 핑계로 켰어.' },
+                    { future: '게임을 하는 게 미래의 나에게 도움이 되는 일인가?', me: '아니, 순간의 쾌락일 뿐이야.' },
+                    { future: '게임 말고 고생한 나를 위해 보상할 다른 방법은 없는가?', me: '따뜻한 차를 마시거나 산책을 할 수 있어.' }
                 ]
             },
             {
@@ -641,16 +721,9 @@
                 name: 'Snacks (간식/야식)',
                 icon: '🍩',
                 color: 'amber',
-                copingSteps: [
-                    { num: 1, label: '식사 직후', text: '식사 마친 즉시 곧바로 <strong class="bg-teal-100 text-teal-900 px-1.5 py-0.5 rounded font-bold border border-teal-300">양치질</strong> 실행하기' },
-                    { num: 2, label: '입 지루함', text: '출출함이나 입이 심심할 땐 즉시 <strong class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold border border-amber-300">껌</strong> 씹기' }
-                ],
-                questions: [
-                    '지금 간식을 먹는 게 미래의 나에게 도움이 되는 일인가?',
-                    '지금 간식을 먹는 게 내 혈당 조절에 도움이 되는가?',
-                    '지금 간식을 먹는 게 복근을 만드는 데 도움이 되는가?',
-                    '간식을 먹기 전에 양치질을 했는가?',
-                    '간식을 먹기 전에 껌을 씹어 봤는가?'
+                dialogues: [
+                    { future: '지금 간식을 먹는 게 미래의 나에게 도움이 되는 일인가?', me: '아니, 건강과 다이어트를 망칠 거야.' },
+                    { future: '간식을 먹기 전에 양치질이나 껌 씹기를 해봤는가?', me: '아직 안 해봤어. 지금 바로 해볼게.' }
                 ]
             }
         ];
@@ -661,12 +734,14 @@
             impulses: loadCustomImpulses(),
             logs: loadLogsFromStorage(),
             activeWizardImpulse: null,
-            activeHabitDetail: null
+            activeHabitDetail: null,
+            chatDialogues: [],
+            chatIndex: 0
         };
 
         function loadCustomHabits() {
             try {
-                const saved = localStorage.getItem('habit_tracker_habits_v2');
+                const saved = localStorage.getItem('habit_tracker_habits_v3');
                 return saved ? JSON.parse(saved) : DEFAULT_HABITS;
             } catch (e) {
                 return DEFAULT_HABITS;
@@ -675,7 +750,7 @@
 
         function saveCustomHabits() {
             try {
-                localStorage.setItem('habit_tracker_habits_v2', JSON.stringify(state.habits));
+                localStorage.setItem('habit_tracker_habits_v3', JSON.stringify(state.habits));
             } catch (e) {
                 console.error('Save habits error:', e);
             }
@@ -683,8 +758,21 @@
 
         function loadCustomImpulses() {
             try {
-                const saved = localStorage.getItem('habit_tracker_impulses_v2');
-                return saved ? JSON.parse(saved) : DEFAULT_IMPULSES;
+                const saved = localStorage.getItem('habit_tracker_impulses_v4');
+                if (saved) {
+                    let data = JSON.parse(saved);
+                    // 구버전(questions) 데이터 마이그레이션
+                    data = data.map(imp => {
+                        if(!imp.dialogues && imp.questions) {
+                            imp.dialogues = imp.questions.map(q => ({ future: q, me: '확인했어.' }));
+                            delete imp.questions;
+                            delete imp.copingSteps;
+                        }
+                        return imp;
+                    });
+                    return data;
+                }
+                return DEFAULT_IMPULSES;
             } catch (e) {
                 return DEFAULT_IMPULSES;
             }
@@ -692,7 +780,7 @@
 
         function saveCustomImpulses() {
             try {
-                localStorage.setItem('habit_tracker_impulses_v2', JSON.stringify(state.impulses));
+                localStorage.setItem('habit_tracker_impulses_v4', JSON.stringify(state.impulses));
             } catch (e) {
                 console.error('Save impulses error:', e);
             }
@@ -708,7 +796,7 @@
 
         function loadLogsFromStorage() {
             try {
-                const saved = localStorage.getItem('habit_tracker_logs');
+                const saved = localStorage.getItem('habit_tracker_logs_v3');
                 return saved ? JSON.parse(saved) : {};
             } catch (e) {
                 return {};
@@ -717,7 +805,7 @@
 
         function saveLogsToStorage() {
             try {
-                localStorage.setItem('habit_tracker_logs', JSON.stringify(state.logs));
+                localStorage.setItem('habit_tracker_logs_v3', JSON.stringify(state.logs));
             } catch (e) {
                 console.error('Storage save error:', e);
             }
@@ -735,18 +823,8 @@
 
         // DOM Elements
         const mainContainer = document.getElementById('main-container');
-        const viewHabits = document.getElementById('view-habits');
-        const viewImpulse = document.getElementById('view-impulse');
-        const viewStats = document.getElementById('view-stats');
-
         const currentDateDisplay = document.getElementById('current-date-display');
-        const prevDateBtn = document.getElementById('prev-date-btn');
-        const nextDateBtn = document.getElementById('next-date-btn');
-
-        const tabHabits = document.getElementById('tab-btn-habits');
-        const tabImpulse = document.getElementById('tab-btn-impulse');
-        const tabStats = document.getElementById('tab-btn-stats');
-
+        
         const habitListContainer = document.getElementById('habit-list-container');
         const habitCountBadge = document.getElementById('habit-count-badge');
         const habitProgressBar = document.getElementById('habit-progress-bar');
@@ -754,13 +832,16 @@
 
         // Modals
         const habitDetailModal = document.getElementById('modal-habit-detail');
-        const closeHabitModalBtn = document.getElementById('close-habit-modal-btn');
-        const modalHabitToggleBtn = document.getElementById('modal-habit-toggle-btn');
+        const habitInfoState = document.getElementById('habit-info-state');
+        const countdownState = document.getElementById('countdown-state');
+        const countdownNumber = document.getElementById('countdown-number');
+        const btnTriggerCountdown = document.getElementById('btn-trigger-countdown');
+        const btnCancelComplete = document.getElementById('btn-cancel-complete');
 
         const impulseWizardModal = document.getElementById('modal-impulse-wizard');
-        const closeWizardModalBtn = document.getElementById('close-wizard-modal-btn');
-        const openImpulseWizardBtn = document.getElementById('open-impulse-wizard-btn');
-        const sosBannerBtn = document.getElementById('sos-trigger-banner');
+        
+        let countdownTimer;
+        let rehearsalTimer;
 
         function renderHeaderDate() {
             const today = getTodayString();
@@ -772,6 +853,16 @@
             }
         }
 
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            renderHabitList();
+            renderImpulseGuides();
+            renderMindsetVisuals();
+            updateMindsetPlaceholder(); // Placeholder 갱신
+            document.getElementById('current-date-display').textContent = '오늘';
+        });
+
+        // 1. Habit Checklist Render
         function renderHabitList() {
             renderHeaderDate();
             const dayLog = getDayLog();
@@ -789,7 +880,7 @@
 
                 card.innerHTML = `
                     <div class="flex items-center space-x-3 cursor-pointer flex-1" onclick="openHabitDetailModal('${habit.id}')">
-                        <div class="w-10 h-10 rounded-xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'} flex items-center justify-center text-lg shrink-0">
+                        <div class="w-10 h-10 rounded-xl ${isDone ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'} flex items-center justify-center text-lg shrink-0 transition-colors">
                             ${habit.icon || '📌'}
                         </div>
                         <div>
@@ -800,7 +891,7 @@
                         </div>
                     </div>
 
-                    <button onclick="toggleHabitComplete('${habit.id}')" class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition ml-2 shrink-0 active:scale-90 ${
+                    <button onclick="toggleHabitCompleteFast('${habit.id}')" class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition ml-2 shrink-0 active:scale-90 ${
                         isDone 
                         ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm' 
                         : 'border-slate-300 text-transparent hover:border-emerald-400'
@@ -824,7 +915,7 @@
             calculateStreak();
         }
 
-        function toggleHabitComplete(habitId) {
+        window.toggleHabitCompleteFast = (habitId) => {
             const dayLog = getDayLog();
             const set = new Set(dayLog.completedHabits || []);
             
@@ -861,11 +952,10 @@
                     break;
                 }
             }
-
             streakCountDisplay.textContent = streak;
         }
 
-        function openHabitDetailModal(habitId) {
+        window.openHabitDetailModal = (habitId) => {
             const habit = state.habits.find(h => h.id === habitId);
             if (!habit) return;
 
@@ -875,73 +965,107 @@
             document.getElementById('modal-habit-title').textContent = habit.name;
             document.getElementById('modal-habit-anchor').textContent = habit.anchor;
             document.getElementById('modal-habit-behavior').textContent = habit.behavior;
-
-            // Edit button handler inside detail
+            
             document.getElementById('modal-habit-edit-btn').onclick = () => {
-                closeHabitModal();
+                closeHabitDetailModal();
                 openEditHabitModal(habit);
             };
 
-            // Completion Button State
-            const dayLog = getDayLog();
-            const isDone = (dayLog.completedHabits || []).includes(habitId);
-            modalHabitToggleBtn.innerHTML = isDone 
-                ? '<i class="fa-solid fa-rotate-left mr-1.5"></i><span>실천 완료 취소하기</span>' 
-                : '<i class="fa-solid fa-circle-check mr-1.5"></i><span>오늘 실천 완료하기</span>';
-                
-            modalHabitToggleBtn.className = isDone 
-                ? 'w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3.5 rounded-xl transition text-base'
-                : 'w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-base flex items-center justify-center space-x-2 active:scale-98';
+            const isDone = getDayLog().completedHabits.includes(habitId);
+            habitInfoState.classList.remove('hidden');
+            countdownState.classList.add('hidden');
+            countdownState.classList.remove('flex');
+            
+            if (isDone) {
+                btnTriggerCountdown.classList.add('hidden');
+                btnCancelComplete.classList.remove('hidden');
+            } else {
+                btnTriggerCountdown.classList.remove('hidden');
+                btnCancelComplete.classList.add('hidden');
+            }
 
             habitDetailModal.classList.remove('hidden');
-            setTimeout(() => {
-                habitDetailModal.classList.remove('opacity-0');
-            }, 10);
+            setTimeout(() => habitDetailModal.classList.remove('opacity-0'), 10);
         }
 
-        function closeHabitModal() {
+        window.closeHabitDetailModal = () => {
             habitDetailModal.classList.add('opacity-0');
-            setTimeout(() => {
-                habitDetailModal.classList.add('hidden');
-            }, 200);
+            setTimeout(() => habitDetailModal.classList.add('hidden'), 300);
+            clearInterval(countdownTimer);
         }
 
-        modalHabitToggleBtn.addEventListener('click', () => {
-            if (state.activeHabitDetail) {
-                const habitId = state.activeHabitDetail.id;
-                const dayLog = getDayLog();
-                const isCurrentlyDone = (dayLog.completedHabits || []).includes(habitId);
+        document.getElementById('close-habit-modal-btn').addEventListener('click', closeHabitDetailModal);
 
-                toggleHabitComplete(habitId);
-                closeHabitModal();
+        btnCancelComplete.onclick = () => {
+            const log = getDayLog();
+            log.completedHabits = log.completedHabits.filter(id => id !== state.activeHabitDetail.id);
+            saveLogsToStorage();
+            renderHabitList();
+            closeHabitDetailModal();
+        };
 
-                // If marked as done, show Celebration Modal
-                if (!isCurrentlyDone) {
-                    showCelebrationModal(state.activeHabitDetail.celebration || '오늘도 한 발짝 성장하셨습니다!');
+        btnTriggerCountdown.onclick = () => {
+            habitInfoState.classList.add('hidden');
+            countdownState.classList.remove('hidden');
+            countdownState.classList.add('flex', 'animate-pop');
+            
+            let count = 5;
+            countdownNumber.textContent = count;
+            
+            countdownTimer = setInterval(() => {
+                count--;
+                if(count > 0) {
+                    countdownNumber.textContent = count;
+                    countdownNumber.classList.remove('animate-pop');
+                    void countdownNumber.offsetWidth;
+                    countdownNumber.classList.add('animate-pop');
+                } else {
+                    clearInterval(countdownTimer);
+                    showBlackoutScreen();
                 }
+            }, 1000);
+        };
+
+        function showBlackoutScreen() {
+            habitDetailModal.classList.add('opacity-0', 'hidden');
+            
+            const blackout = document.getElementById('blackout-screen');
+            blackout.classList.remove('hidden');
+            blackout.classList.add('flex');
+            setTimeout(() => blackout.classList.remove('opacity-0'), 10);
+            
+            blackout.onclick = () => {
+                blackout.classList.add('opacity-0');
+                setTimeout(() => {
+                    blackout.classList.add('hidden');
+                    blackout.classList.remove('flex');
+                    completeActiveHabit();
+                }, 300);
+            };
+        }
+
+        function completeActiveHabit() {
+            const log = getDayLog();
+            if (!log.completedHabits.includes(state.activeHabitDetail.id)) {
+                log.completedHabits.push(state.activeHabitDetail.id);
+                saveLogsToStorage();
             }
-        });
-
-        function showCelebrationModal(celebrationText) {
-            document.getElementById('celebration-message-text').textContent = celebrationText;
-            const celebModal = document.getElementById('modal-celebration');
-            celebModal.classList.remove('hidden');
-            setTimeout(() => {
-                celebModal.classList.remove('opacity-0');
-            }, 10);
+            renderHabitList();
+            
+            document.getElementById('celebration-message-text').textContent = state.activeHabitDetail.celebration || '나 자신 칭찬하기';
+            const cModal = document.getElementById('modal-celebration');
+            cModal.classList.remove('hidden');
+            setTimeout(() => cModal.classList.remove('opacity-0'), 10);
         }
 
-        function closeCelebrationModal() {
-            const celebModal = document.getElementById('modal-celebration');
-            celebModal.classList.add('opacity-0');
-            setTimeout(() => {
-                celebModal.classList.add('hidden');
-            }, 200);
-        }
+        window.closeCelebrationModal = () => {
+            const cModal = document.getElementById('modal-celebration');
+            cModal.classList.add('opacity-0');
+            setTimeout(() => cModal.classList.add('hidden'), 300);
+        };
 
-        closeHabitModalBtn.addEventListener('click', closeHabitModal);
-
-        function openEditHabitModal(habitObj = null) {
+        // Habit CRUD Logic
+        window.openEditHabitModal = (habitObj = null) => {
             const editModal = document.getElementById('modal-edit-habit');
             const deleteBtn = document.getElementById('btn-delete-habit');
 
@@ -953,8 +1077,8 @@
                 document.getElementById('edit-habit-anchor').value = habitObj.anchor || '';
                 document.getElementById('edit-habit-behavior').value = habitObj.behavior || '';
                 document.getElementById('edit-habit-celebration').value = habitObj.celebration || '';
-                document.getElementById('edit-habit-visualisation').value = (habitObj.visualisation || []).join('\n');
-                document.getElementById('edit-habit-future').value = (habitObj.futureDialogue || []).join('\n');
+                document.getElementById('edit-habit-visualisation').value = Array.isArray(habitObj.visualisation) ? habitObj.visualisation.join('\n') : (habitObj.visualisation || '');
+                document.getElementById('edit-habit-future').value = Array.isArray(habitObj.futureDialogue) ? habitObj.futureDialogue.join('\n') : (habitObj.futureDialogue || '');
                 document.getElementById('edit-habit-language').value = habitObj.languageReframing || '';
                 deleteBtn.classList.remove('hidden');
             } else {
@@ -967,22 +1091,17 @@
 
             editModal.classList.remove('hidden');
             setTimeout(() => editModal.classList.remove('opacity-0'), 10);
-        }
+        };
 
-        function closeEditHabitModal() {
+        window.closeEditHabitModal = () => {
             const editModal = document.getElementById('modal-edit-habit');
             editModal.classList.add('opacity-0');
-            setTimeout(() => editModal.classList.add('hidden'), 200);
-        }
+            setTimeout(() => editModal.classList.add('hidden'), 300);
+        };
 
-        function saveHabitForm(e) {
+        window.saveHabitForm = (e) => {
             e.preventDefault();
             const habitId = document.getElementById('edit-habit-id').value || `habit_${Date.now()}`;
-            const name = document.getElementById('edit-habit-name').value.trim();
-            const icon = document.getElementById('edit-habit-icon').value.trim() || '📌';
-            const anchor = document.getElementById('edit-habit-anchor').value.trim();
-            const behavior = document.getElementById('edit-habit-behavior').value.trim();
-            const celebration = document.getElementById('edit-habit-celebration').value.trim();
             
             const visText = document.getElementById('edit-habit-visualisation').value.trim();
             const visualisation = visText ? visText.split('\n').filter(line => line.trim() !== '') : [];
@@ -990,11 +1109,19 @@
             const futText = document.getElementById('edit-habit-future').value.trim();
             const futureDialogue = futText ? futText.split('\n').filter(line => line.trim() !== '') : [];
 
-            const languageReframing = document.getElementById('edit-habit-language').value.trim();
+            const updatedHabit = {
+                id: habitId,
+                name: document.getElementById('edit-habit-name').value.trim(),
+                icon: document.getElementById('edit-habit-icon').value.trim() || '📌',
+                anchor: document.getElementById('edit-habit-anchor').value.trim(),
+                behavior: document.getElementById('edit-habit-behavior').value.trim(),
+                celebration: document.getElementById('edit-habit-celebration').value.trim(),
+                visualisation: visualisation,
+                futureDialogue: futureDialogue,
+                languageReframing: document.getElementById('edit-habit-language').value.trim()
+            };
 
             const existingIdx = state.habits.findIndex(h => h.id === habitId);
-            const updatedHabit = { id: habitId, name, icon, anchor, behavior, celebration, visualisation, futureDialogue, languageReframing };
-
             if (existingIdx >= 0) {
                 state.habits[existingIdx] = updatedHabit;
             } else {
@@ -1003,11 +1130,12 @@
 
             saveCustomHabits();
             renderHabitList();
+            renderMindsetVisuals();
             closeEditHabitModal();
             showToastNotification('✅ 습관 정보가 저장되었습니다!');
-        }
+        };
 
-        function deleteCurrentHabit() {
+        window.deleteCurrentHabit = () => {
             const habitId = document.getElementById('edit-habit-id').value;
             if (!habitId) return;
 
@@ -1015,82 +1143,247 @@
                 state.habits = state.habits.filter(h => h.id !== habitId);
                 saveCustomHabits();
                 renderHabitList();
+                renderMindsetVisuals();
                 closeEditHabitModal();
                 showToastNotification('🗑️ 습관이 삭제되었습니다.');
             }
+        };
+
+        // Mindset View Render (Visualization & Language)
+        function renderMindsetVisuals() {
+            const container = document.getElementById('mindset-visual-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            if (state.habits.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">등록된 습관이 없습니다.</p>';
+                return;
+            }
+
+            state.habits.forEach(habit => {
+                let visHtml = '설정된 시각화 내용이 없습니다.';
+                if (habit.visualisation && habit.visualisation.length > 0) {
+                    const visArray = Array.isArray(habit.visualisation) ? habit.visualisation : [habit.visualisation];
+                    visHtml = visArray.map(item => `• ${item}`).join('<br>');
+                }
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-4 border border-slate-100 shadow-sm transition hover:border-emerald-200';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-lg bg-emerald-50 w-8 h-8 rounded-full flex items-center justify-center">${habit.icon}</span>
+                            <h4 class="font-bold text-slate-900 text-sm">${habit.name}</h4>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openEditVisualModal('${habit.id}')" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition" title="시각화 내용 수정">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
+                            <button onclick="startRehearsal('${habit.id}')" class="bg-slate-900 hover:bg-black text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1.5 active:scale-95">
+                                <i class="fa-solid fa-play"></i> 리허설
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-[11px] text-slate-600 leading-relaxed font-medium">
+                            <i class="fa-solid fa-quote-left text-slate-300 mr-1"></i><br>
+                            ${visHtml}
+                        </p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
+        // 마인드 짐 전용 - 시각화 텍스트 즉시 수정 모달
+        window.openEditVisualModal = (habitId) => {
+            const habit = state.habits.find(h => h.id === habitId);
+            if (!habit) return;
+            
+            document.getElementById('edit-visual-habit-id').value = habit.id;
+            let visText = '';
+            if (habit.visualisation) {
+                 visText = Array.isArray(habit.visualisation) ? habit.visualisation.join('\n') : habit.visualisation;
+            }
+            document.getElementById('edit-visual-text').value = visText;
+            
+            const modal = document.getElementById('modal-edit-visual');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        };
+
+        window.closeEditVisualModal = () => {
+            const modal = document.getElementById('modal-edit-visual');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        window.saveVisualModal = () => {
+            const habitId = document.getElementById('edit-visual-habit-id').value;
+            const text = document.getElementById('edit-visual-text').value.trim();
+            const visArray = text ? text.split('\n').filter(line => line.trim() !== '') : [];
+            
+            const habitIndex = state.habits.findIndex(h => h.id === habitId);
+            if (habitIndex > -1) {
+                state.habits[habitIndex].visualisation = visArray;
+                saveCustomHabits();
+                renderMindsetVisuals();
+                closeEditVisualModal();
+                showToastNotification('✅ 시각화 리허설 내용이 업데이트되었습니다.');
+            }
+        };
+
+        // Rehearsal Logic
+        window.startRehearsal = (habitId) => {
+            const habit = state.habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            document.getElementById('rehearsal-habit-name').textContent = habit.name;
+            
+            let visText = '행동을 극복하는 내 모습을 상상하세요.';
+            if (habit.visualisation && habit.visualisation.length > 0) {
+                 visText = Array.isArray(habit.visualisation) ? habit.visualisation.join('\n') : habit.visualisation;
+            }
+            document.getElementById('rehearsal-visual-text').textContent = visText;
+            
+            const rModal = document.getElementById('modal-rehearsal');
+            const countdownEl = document.getElementById('rehearsal-countdown');
+            const progressCircle = document.getElementById('rehearsal-progress');
+            
+            let count = 10;
+            countdownEl.textContent = count;
+            progressCircle.style.strokeDashoffset = '0';
+            
+            rModal.classList.remove('hidden');
+            rModal.classList.add('flex');
+            setTimeout(() => rModal.classList.remove('opacity-0'), 10);
+
+            rehearsalTimer = setInterval(() => {
+                count--;
+                countdownEl.textContent = count;
+                
+                const offset = 301.59 - (count / 10) * 301.59;
+                progressCircle.style.strokeDashoffset = offset;
+
+                if (count <= 0) {
+                    clearInterval(rehearsalTimer);
+                    countdownEl.textContent = '완료';
+                    setTimeout(() => {
+                        cancelRehearsal();
+                        showToastNotification('✨ 시각화 리허설 완료! 뇌 회로가 강화되었습니다.');
+                    }, 1000);
+                }
+            }, 1000);
+        };
+
+        window.cancelRehearsal = () => {
+            clearInterval(rehearsalTimer);
+            const rModal = document.getElementById('modal-rehearsal');
+            rModal.classList.add('opacity-0');
+            setTimeout(() => {
+                rModal.classList.add('hidden');
+                rModal.classList.remove('flex');
+            }, 300);
+        };
+
+        // Language Reframing Logic
+        window.updateMindsetPlaceholder = () => {
+            const cat = document.getElementById('mindset-category').value;
+            const badArea = document.getElementById('mindset-bad-word');
+            const goodArea = document.getElementById('mindset-good-word');
+            
+            if (cat === 'blame') {
+                badArea.placeholder = "예: 저 사람 때문에, 상황이 안 좋아서 내 계획이 망가졌어.";
+                goodArea.placeholder = "성장 언어 예시: 통제할 수 없는 것은 잊자. 지금 내가 할 수 있는 작은 행동은 무엇일까?";
+            } else if (cat === 'past') {
+                badArea.placeholder = "예: 예전에도 실패했는데 어차피 이번에도 안 될 거야.";
+                goodArea.placeholder = "성장 언어 예시: 과거는 데이터일 뿐이다. 이번엔 다른 방식으로 시도해볼 테니 괜찮아.";
+            } else if (cat === 'pressure') {
+                badArea.placeholder = "예: 무조건 완벽하게 끝내야 해. 안 그러면 안 한 것만 못해.";
+                goodArea.placeholder = "성장 언어 예시: 완벽하지 않아도 일단 가볍게 1분만 시작해 보자.";
+            }
+        };
+
+        window.copyReframedWord = () => {
+            const text = document.getElementById('mindset-good-word').value;
+            if (!text) {
+                showToastNotification('복사할 텍스트가 없습니다.');
+                return;
+            }
+            
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToastNotification('📋 성장 언어가 복사되었습니다.');
+            } catch (err) {}
+            document.body.removeChild(textArea);
+        };
+
+        window.saveMindsetReframing = () => {
+            const goodText = document.getElementById('mindset-good-word').value;
+            const badText = document.getElementById('mindset-bad-word').value;
+            
+            if (!badText) {
+                showToastNotification('현재 든 부정적인 생각을 먼저 적어주세요.');
+                return;
+            }
+            if (!goodText) {
+                showToastNotification('성장 마인드셋 언어로 교정해서 입력해주세요.');
+                return;
+            }
+            showToastNotification('🌟 훌륭합니다! 뇌의 정체성 회로가 성장 방향으로 재설정되었습니다.');
+            document.getElementById('mindset-bad-word').value = '';
+            document.getElementById('mindset-good-word').value = '';
+        };
+
+        // Impulse CRUD & Wizard
         function renderImpulseGuides() {
             const container = document.getElementById('impulse-guide-container');
             container.innerHTML = '';
 
             state.impulses.forEach(imp => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3 text-xs';
-
-                // Coping steps HTML
-                const stepsHtml = (imp.copingSteps || []).map((step, idx) => `
-                    <div class="flex items-start space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${step.num || (idx + 1)}</span>
-                        <div class="text-slate-700 leading-relaxed">
-                            <span class="font-bold text-slate-900 mr-1">[${step.label}]</span>
-                            ${step.text}
-                        </div>
-                    </div>
-                `).join('');
-
+                card.className = 'bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition';
+                card.onclick = () => startWizardForImpulse(imp.id);
                 card.innerHTML = `
-                    <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xl">${imp.icon || '🚨'}</span>
-                            <h4 class="font-bold text-slate-900 text-sm">${imp.name}</h4>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <button onclick="openEditImpulseModalById('${imp.id}')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg transition text-xs">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button onclick="startWizardForImpulse('${imp.id}')" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-3 py-1.5 rounded-lg transition text-[11px] shadow-sm flex items-center space-x-1">
-                                <i class="fa-solid fa-bolt text-amber-300"></i>
-                                <span>점검 실행</span>
-                            </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl bg-rose-50 w-12 h-12 rounded-full flex items-center justify-center">${imp.icon || '🚨'}</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">${imp.name}</h4>
+                            <p class="text-[10px] text-slate-500 mt-0.5">미래 자아와 대화하기</p>
                         </div>
                     </div>
-
-                    <div class="space-y-1.5 pt-0.5">
-                        <span class="text-[11px] font-bold text-emerald-700 block">🛡️ 행동 대처 수칙</span>
-                        <div class="space-y-1.5">
-                            ${stepsHtml}
-                        </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="event.stopPropagation(); openEditImpulseModal('${imp.id}')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <i class="fa-solid fa-chevron-right text-slate-300"></i>
                     </div>
                 `;
-
                 container.appendChild(card);
             });
         }
 
-        function openEditImpulseModalById(impulseId) {
-            const imp = state.impulses.find(i => i.id === impulseId);
-            if (imp) openEditImpulseModal(imp);
-        }
-
-        function openEditImpulseModal(impulseObj = null) {
+        window.openEditImpulseModal = (impulseId = null) => {
             const editModal = document.getElementById('modal-edit-impulse');
             const deleteBtn = document.getElementById('btn-delete-impulse');
 
-            if (impulseObj) {
-                document.getElementById('edit-impulse-modal-title').textContent = '충동 및 대처수칙 수정';
-                document.getElementById('edit-impulse-id').value = impulseObj.id;
-                document.getElementById('edit-impulse-name').value = impulseObj.name;
-                document.getElementById('edit-impulse-icon').value = impulseObj.icon || '📱';
+            if (impulseId) {
+                const imp = state.impulses.find(i => i.id === impulseId);
+                document.getElementById('edit-impulse-modal-title').textContent = '충동 및 대화 수정';
+                document.getElementById('edit-impulse-id').value = imp.id;
+                document.getElementById('edit-impulse-name').value = imp.name;
+                document.getElementById('edit-impulse-icon').value = imp.icon || '🚨';
                 
-                // Format coping steps into text lines
-                const stepsText = (impulseObj.copingSteps || []).map(s => `[${s.label}] ${s.text}`).join('\n');
-                document.getElementById('edit-impulse-steps').value = stepsText;
-
-                document.getElementById('edit-impulse-questions').value = (impulseObj.questions || []).join('\n');
+                document.getElementById('edit-impulse-questions').value = (imp.dialogues || []).map(d => d.future).join('\n');
+                document.getElementById('edit-impulse-answers').value = (imp.dialogues || []).map(d => d.me).join('\n');
+                
                 deleteBtn.classList.remove('hidden');
             } else {
-                document.getElementById('edit-impulse-modal-title').textContent = '새 충동 항목 추가';
+                document.getElementById('edit-impulse-modal-title').textContent = '새 충동 추가';
                 document.getElementById('edit-impulse-id').value = '';
                 document.getElementById('form-edit-impulse').reset();
                 document.getElementById('edit-impulse-icon').value = '🚨';
@@ -1099,39 +1392,36 @@
 
             editModal.classList.remove('hidden');
             setTimeout(() => editModal.classList.remove('opacity-0'), 10);
-        }
+        };
 
-        function closeEditImpulseModal() {
+        window.closeEditImpulseModal = () => {
             const editModal = document.getElementById('modal-edit-impulse');
             editModal.classList.add('opacity-0');
-            setTimeout(() => editModal.classList.add('hidden'), 200);
-        }
+            setTimeout(() => editModal.classList.add('hidden'), 300);
+        };
 
-        function saveImpulseForm(e) {
+        window.saveImpulseForm = (e) => {
             e.preventDefault();
             const impulseId = document.getElementById('edit-impulse-id').value || `impulse_${Date.now()}`;
             const name = document.getElementById('edit-impulse-name').value.trim();
             const icon = document.getElementById('edit-impulse-icon').value.trim() || '🚨';
 
-            // Parse Steps
-            const rawSteps = document.getElementById('edit-impulse-steps').value.trim().split('\n');
-            const copingSteps = rawSteps.filter(line => line.trim() !== '').map((line, idx) => {
-                let label = '행동';
-                let text = line;
-                const match = line.match(/^\[(.*?)\]\s*(.*)$/);
-                if (match) {
-                    label = match[1];
-                    text = match[2];
-                }
-                return { num: idx + 1, label, text };
+            const rawQ = document.getElementById('edit-impulse-questions').value.trim().split('\n');
+            const rawA = document.getElementById('edit-impulse-answers').value.trim().split('\n');
+
+            const dialogues = rawQ.filter(q => q.trim() !== '').map((q, idx) => {
+                return {
+                    future: q.trim(),
+                    me: (rawA[idx] && rawA[idx].trim() !== '') ? rawA[idx].trim() : '확인했어.'
+                };
             });
 
-            // Parse Questions
-            const rawQ = document.getElementById('edit-impulse-questions').value.trim().split('\n');
-            const questions = rawQ.filter(q => q.trim() !== '');
+            if (dialogues.length === 0) {
+                dialogues.push({ future: '이게 미래의 너에게 도움이 될까?', me: '아니, 도움되지 않을 거야.' });
+            }
 
             const existingIdx = state.impulses.findIndex(i => i.id === impulseId);
-            const updatedImp = { id: impulseId, name, icon, color: 'rose', copingSteps, questions };
+            const updatedImp = { id: impulseId, name, icon, color: 'rose', dialogues };
 
             if (existingIdx >= 0) {
                 state.impulses[existingIdx] = updatedImp;
@@ -1143,9 +1433,9 @@
             renderImpulseGuides();
             closeEditImpulseModal();
             showToastNotification('✅ 충동 설정이 저장되었습니다!');
-        }
+        };
 
-        function deleteCurrentImpulse() {
+        window.deleteCurrentImpulse = () => {
             const impulseId = document.getElementById('edit-impulse-id').value;
             if (!impulseId) return;
 
@@ -1156,141 +1446,161 @@
                 closeEditImpulseModal();
                 showToastNotification('🗑️ 충동 항목이 삭제되었습니다.');
             }
+        };
+
+        document.getElementById('open-impulse-wizard-btn').onclick = () => {
+            document.getElementById('wizard-subtitle').textContent = '어떤 충동인가요?';
+            document.getElementById('wizard-step-1').classList.remove('hidden');
+            document.getElementById('wizard-step-2').classList.add('hidden');
+            document.getElementById('wizard-step-2').classList.remove('flex');
+            
+            const opts = document.getElementById('wizard-impulse-options');
+            opts.innerHTML = '';
+            state.impulses.forEach(imp => {
+                const btn = document.createElement('button');
+                btn.className = 'bg-slate-50 hover:bg-rose-50 border border-slate-200 p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 transition active:scale-95';
+                btn.onclick = () => startWizard(imp.id);
+                btn.innerHTML = `<span class="text-3xl">${imp.icon}</span><span class="font-bold text-xs text-slate-800 text-center">${imp.name}</span>`;
+                opts.appendChild(btn);
+            });
+
+            impulseWizardModal.classList.remove('hidden');
+            setTimeout(() => impulseWizardModal.classList.remove('opacity-0'), 10);
+        };
+
+        document.getElementById('sos-trigger-banner').onclick = document.getElementById('open-impulse-wizard-btn').onclick;
+
+        document.getElementById('close-wizard-modal-btn').onclick = () => {
+            impulseWizardModal.classList.add('opacity-0');
+            setTimeout(() => impulseWizardModal.classList.add('hidden'), 300);
+        };
+
+        window.startWizardForImpulse = (impulseId) => {
+            const imp = state.impulses.find(i => i.id === impulseId);
+            if (imp) {
+                impulseWizardModal.classList.remove('hidden');
+                setTimeout(() => impulseWizardModal.classList.remove('opacity-0'), 10);
+                startWizard(imp.id);
+            }
+        };
+
+        // 채팅 흐름 로직 개선
+        window.startWizard = (id) => {
+            const imp = state.impulses.find(i => i.id === id);
+            state.activeWizardImpulse = imp;
+            
+            document.getElementById('wizard-subtitle').textContent = `${imp.name} 제어 중...`;
+            document.getElementById('wizard-step-1').classList.add('hidden');
+            
+            const step2 = document.getElementById('wizard-step-2');
+            step2.classList.remove('hidden');
+            step2.classList.add('flex');
+            
+            const chatBox = document.getElementById('chat-container');
+            chatBox.innerHTML = `<div class="text-center my-2"><span class="bg-slate-200/50 text-slate-500 text-[10px] font-bold px-3 py-1 rounded-full">미래의 나와 연결되었습니다.</span></div>`;
+            
+            if (imp.dialogues && imp.dialogues.length > 0) {
+                state.chatDialogues = [...imp.dialogues];
+            } else {
+                state.chatDialogues = [{ future: '이게 너에게 도움이 될까?', me: '확인했어.' }];
+            }
+            
+            state.chatIndex = 0;
+            document.getElementById('chat-action-area').classList.remove('hidden');
+            
+            showFutureMessage();
+        };
+
+        function showFutureMessage() {
+            const chatBox = document.getElementById('chat-container');
+            const currentDialogue = state.chatDialogues[state.chatIndex];
+
+            const future = document.createElement('div');
+            future.className = 'chat-bubble chat-future animate-slide-up mt-2';
+            future.innerHTML = `<strong class="text-[10px] text-slate-400 block mb-1">미래의 나</strong>${currentDialogue.future}`;
+            chatBox.appendChild(future);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            updateChatActions();
+        }
+
+        function updateChatActions() {
+            const midChat = document.getElementById('action-mid-chat');
+            const endChat = document.getElementById('action-end-chat');
+            const currentDialogue = state.chatDialogues[state.chatIndex];
+
+            if (state.chatIndex < state.chatDialogues.length - 1) {
+                // 아직 대화가 더 남음
+                midChat.classList.remove('hidden');
+                endChat.classList.add('hidden');
+                document.getElementById('reply-text-preview').textContent = currentDialogue.me;
+            } else {
+                // 마지막 질문 도달
+                midChat.classList.add('hidden');
+                endChat.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('wizard-reply-btn').onclick = () => {
+            const chatBox = document.getElementById('chat-container');
+            const myReply = state.chatDialogues[state.chatIndex].me;
+
+            const me = document.createElement('div');
+            me.className = 'chat-bubble chat-me animate-slide-up mt-2';
+            me.textContent = myReply;
+            chatBox.appendChild(me);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 잠시 버튼을 흐리게 처리 (더블클릭 방지)
+            const midChat = document.getElementById('action-mid-chat');
+            midChat.classList.add('opacity-50', 'pointer-events-none');
+
+            state.chatIndex++;
+
+            // 0.6초 뒤에 다음 미래 메시지 출력
+            setTimeout(() => {
+                midChat.classList.remove('opacity-50', 'pointer-events-none');
+                showFutureMessage();
+            }, 600);
+        };
+
+        // 이겨냄 버튼들 통합 이벤트
+        document.querySelectorAll('.wizard-win-btn').forEach(btn => {
+            btn.onclick = () => recordImpulseOutcome(true);
+        });
+        
+        document.getElementById('wizard-givein-btn').onclick = () => recordImpulseOutcome(false);
+
+        function recordImpulseOutcome(isWin) {
+            const log = getDayLog();
+            const now = new Date();
+            log.impulseLogs.unshift({
+                impulseId: state.activeWizardImpulse.id,
+                impulseName: state.activeWizardImpulse.name,
+                isWin,
+                time: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`
+            });
+            saveLogsToStorage();
+            document.getElementById('close-wizard-modal-btn').click();
+            renderStatsView();
+            showToastNotification(isWin ? '🎉 훌륭합니다! 충동을 이겨냈습니다.' : '💪 다음에는 꼭 이겨낼 수 있을 거예요!');
         }
 
         function confirmResetData() {
             if (confirm('초기 데이터(기본 제공 습관 및 충동 수칙)로 복원하시겠습니까? 작성하신 맞춤 설정이 초기화됩니다.')) {
-                localStorage.removeItem('habit_tracker_habits_v2');
-                localStorage.removeItem('habit_tracker_impulses_v2');
+                localStorage.removeItem('habit_tracker_habits_v3');
+                localStorage.removeItem('habit_tracker_impulses_v4');
                 state.habits = DEFAULT_HABITS;
                 state.impulses = DEFAULT_IMPULSES;
                 renderHabitList();
                 renderImpulseGuides();
+                renderMindsetVisuals();
                 renderStatsView();
                 showToastNotification('🔄 초기 데이터로 복원되었습니다.');
             }
         }
 
-        function openImpulseWizard() {
-            const optionsContainer = document.getElementById('wizard-impulse-options');
-            optionsContainer.innerHTML = '';
-
-            state.impulses.forEach(imp => {
-                const btn = document.createElement('button');
-                btn.className = 'bg-slate-100 hover:bg-rose-50 hover:border-rose-300 border border-transparent p-3 rounded-xl flex flex-col items-center justify-center text-center transition space-y-1';
-                btn.onclick = () => selectWizardImpulse(imp);
-
-                btn.innerHTML = `
-                    <span class="text-2xl">${imp.icon}</span>
-                    <span class="font-bold text-xs text-slate-800">${imp.name}</span>
-                `;
-                optionsContainer.appendChild(btn);
-            });
-
-            document.getElementById('wizard-step-1').classList.remove('hidden');
-            document.getElementById('wizard-step-2').classList.add('hidden');
-            document.getElementById('wizard-win-btn').disabled = true;
-            document.getElementById('wizard-win-btn').classList.add('opacity-50', 'cursor-not-allowed');
-
-            impulseWizardModal.classList.remove('hidden');
-            setTimeout(() => {
-                impulseWizardModal.classList.remove('opacity-0');
-            }, 10);
-        }
-
-        function startWizardForImpulse(impulseId) {
-            const imp = state.impulses.find(i => i.id === impulseId);
-            if (imp) {
-                openImpulseWizard();
-                selectWizardImpulse(imp);
-            }
-        }
-
-        function selectWizardImpulse(impulse) {
-            state.activeWizardImpulse = impulse;
-
-            // Render Formatted Coping Steps
-            const copingContainer = document.getElementById('wizard-coping-container');
-            copingContainer.innerHTML = (impulse.copingSteps || []).map((step, idx) => `
-                <div class="flex items-start space-x-2 bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-200/80 text-xs">
-                    <span class="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${step.num || (idx + 1)}</span>
-                    <div class="text-slate-800 leading-relaxed">
-                        <span class="font-bold text-emerald-900 mr-1">[${step.label}]</span>
-                        ${step.text}
-                    </div>
-                </div>
-            `).join('');
-
-            // Question List
-            const qContainer = document.getElementById('wizard-questions-list');
-            qContainer.innerHTML = '';
-
-            (impulse.questions || []).forEach((q, idx) => {
-                const item = document.createElement('label');
-                item.className = 'flex items-start space-x-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 cursor-pointer text-xs';
-                item.innerHTML = `
-                    <input type="checkbox" onchange="checkWizardProgress()" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 wizard-q-check">
-                    <span class="text-slate-700 leading-snug">${q}</span>
-                `;
-                qContainer.appendChild(item);
-            });
-
-            document.getElementById('wizard-step-1').classList.add('hidden');
-            document.getElementById('wizard-step-2').classList.remove('hidden');
-        }
-
-        function checkWizardProgress() {
-            const checks = document.querySelectorAll('.wizard-q-check');
-            const checkedCount = Array.from(checks).filter(c => c.checked).length;
-            const winBtn = document.getElementById('wizard-win-btn');
-
-            if (checkedCount > 0) {
-                winBtn.disabled = false;
-                winBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                winBtn.disabled = true;
-                winBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
-        function recordWizardOutcome(isWin) {
-            if (!state.activeWizardImpulse) return;
-
-            const dayLog = getDayLog();
-            if (!dayLog.impulseLogs) dayLog.impulseLogs = [];
-
-            const now = new Date();
-            const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-            dayLog.impulseLogs.unshift({
-                impulseId: state.activeWizardImpulse.id,
-                impulseName: state.activeWizardImpulse.name,
-                isWin: isWin,
-                time: timeStr
-            });
-
-            saveLogsToStorage();
-            closeWizardModal();
-            renderStatsView();
-
-            showToastNotification(
-                isWin ? '🎉 충동을 성공적으로 이겨냈습니다!' : '💪 다음번에 꼭 승리해요!'
-            );
-        }
-
-        function closeWizardModal() {
-            impulseWizardModal.classList.add('opacity-0');
-            setTimeout(() => {
-                impulseWizardModal.classList.add('hidden');
-            }, 200);
-        }
-
-        openImpulseWizardBtn.addEventListener('click', openImpulseWizard);
-        sosBannerBtn.addEventListener('click', openImpulseWizard);
-        closeWizardModalBtn.addEventListener('click', closeWizardModal);
-        document.getElementById('wizard-win-btn').addEventListener('click', () => recordWizardOutcome(true));
-        document.getElementById('wizard-givein-btn').addEventListener('click', () => recordWizardOutcome(false));
-
+        // Stats View
         function renderStatsView() {
             let totalWins = 0;
             let totalHabitCompletions = 0;
@@ -1318,7 +1628,8 @@
                 historyContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">기록된 충동 대처 내역이 없습니다.</p>`;
             } else {
                 historyContainer.innerHTML = '';
-                recentImpulseLogs.slice(0, 10).forEach(item => {
+                // Sort by descending time
+                recentImpulseLogs.reverse().slice(0, 10).forEach(item => {
                     const el = document.createElement('div');
                     el.className = 'py-2 flex items-center justify-between text-xs';
                     el.innerHTML = `
@@ -1377,63 +1688,66 @@
             }
         }
 
+        // 4. Tab Navigation & Dates
+        const tabs = ['habits', 'impulse', 'mindset', 'stats'];
+        tabs.forEach(tab => {
+            document.getElementById(`tab-btn-${tab}`).onclick = () => switchTab(tab);
+        });
+
         function switchTab(tabName) {
-            viewHabits.classList.add('hidden');
-            viewImpulse.classList.add('hidden');
-            viewStats.classList.add('hidden');
-
-            [tabHabits, tabImpulse, tabStats].forEach(btn => {
-                btn.className = 'nav-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition';
+            tabs.forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                btn.classList.remove('text-emerald-600', 'text-rose-600', 'text-indigo-600');
+                btn.classList.add('text-slate-400');
             });
-
-            if (tabName === 'habits') {
-                viewHabits.classList.remove('hidden');
-                tabHabits.className = 'nav-tab-btn flex flex-col items-center justify-center py-1 text-emerald-600 transition font-bold';
-                renderHabitList();
-            } else if (tabName === 'impulse') {
-                viewImpulse.classList.remove('hidden');
-                tabImpulse.className = 'nav-tab-btn flex flex-col items-center justify-center py-1 text-rose-600 transition font-bold';
-                renderImpulseGuides();
-            } else if (tabName === 'stats') {
-                viewStats.classList.remove('hidden');
-                tabStats.className = 'nav-tab-btn flex flex-col items-center justify-center py-1 text-emerald-600 transition font-bold';
+            
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+            activeBtn.classList.remove('text-slate-400');
+            
+            if (tabName === 'impulse') activeBtn.classList.add('text-rose-600');
+            else if (tabName === 'mindset') {
+                activeBtn.classList.add('text-indigo-600');
+                renderMindsetVisuals();
+            }
+            else if (tabName === 'stats') {
+                activeBtn.classList.add('text-emerald-600');
                 renderStatsView();
             }
+            else activeBtn.classList.add('text-emerald-600');
         }
 
-        tabHabits.addEventListener('click', () => switchTab('habits'));
-        tabImpulse.addEventListener('click', () => switchTab('impulse'));
-        tabStats.addEventListener('click', () => switchTab('stats'));
-
-        // Date Navigation Handlers
-        prevDateBtn.addEventListener('click', () => {
+        document.getElementById('prev-date-btn').onclick = () => {
             const current = new Date(state.selectedDate);
             current.setDate(current.getDate() - 1);
-            const yyyy = current.getFullYear();
-            const mm = String(current.getMonth() + 1).padStart(2, '0');
-            const dd = String(current.getDate()).padStart(2, '0');
-            state.selectedDate = `${yyyy}-${mm}-${dd}`;
-            renderHabitList();
-        });
+            updateDate(current);
+        };
 
-        nextDateBtn.addEventListener('click', () => {
+        document.getElementById('next-date-btn').onclick = () => {
             const current = new Date(state.selectedDate);
             current.setDate(current.getDate() + 1);
-            const yyyy = current.getFullYear();
-            const mm = String(current.getMonth() + 1).padStart(2, '0');
-            const dd = String(current.getDate()).padStart(2, '0');
-            state.selectedDate = `${yyyy}-${mm}-${dd}`;
-            renderHabitList();
-        });
+            updateDate(current);
+        };
 
-        currentDateDisplay.addEventListener('click', () => {
-            state.selectedDate = getTodayString();
+        document.getElementById('current-date-display').onclick = () => {
+            updateDate(new Date());
+        };
+
+        function updateDate(d) {
+            state.selectedDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            if (state.selectedDate === getTodayString()) {
+                document.getElementById('current-date-display').textContent = '오늘';
+            } else {
+                document.getElementById('current-date-display').textContent = `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+            }
             renderHabitList();
-        });
+            renderStatsView();
+        }
 
         function showToastNotification(msg) {
             const toast = document.createElement('div');
-            toast.className = 'fixed top-16 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-[-10px] font-medium';
+            toast.className = 'fixed top-16 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-[-10px] font-medium text-center whitespace-nowrap';
             toast.textContent = msg;
             document.body.appendChild(toast);
 
@@ -1447,9 +1761,6 @@
             }, 2500);
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderHabitList();
-        });
     </script>
 </body>
 </html>
